@@ -13,12 +13,12 @@ const weeklyScoreEl = document.getElementById("weekly-score");
 const monthlyScoreEl = document.getElementById("monthly-score");
 
 // Check user status
-auth.onAuthStateChanged(user => {
+firebase.auth().onAuthStateChanged(user => {
   if (user) {
     currentUser = user;
     loadHabits();
   } else {
-    window.location.href = "login.html"; // Redirect to login
+    window.location.href = "login.html";
   }
 });
 
@@ -124,7 +124,7 @@ function calculateScores(logMap) {
 }
 
 // Access db directly if it's declared globally
-db.collection("users").doc(currentUser.uid).collection("habits").add({ title: "Read Book", logs: {} });
+db.collection("users").doc(currentUser.uid).collection("habits").add({ title: "workout", logs: {} });
 
 // Logout
 document.getElementById("logout-btn")?.addEventListener("click", () => {
