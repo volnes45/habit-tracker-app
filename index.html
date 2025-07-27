@@ -1,0 +1,23 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Habit Tracker</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+</head>
+<body class="light-mode">
+  <header>
+    <h1>Habit Tracker</h1>
+    <button id="logout-btn">Logout</button>
+    <button id="toggle-dark">Toggle Dark Mode</button>
+  </header>  <main>
+    <section class="add-task">
+      <input type="text" id="task-input" placeholder="New Habit...">
+      <button id="add-task">Add</button>
+    </section><section id="task-list"></section>
+
+  </main>  <script src="firebase-config.js"></script>  <script src="main.js"></script></body>
+</html>/*

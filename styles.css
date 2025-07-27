@@ -1,0 +1,25 @@
+body { font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; background: var(--bg); color: var(--text); transition: background 0.3s, color 0.3s; }
+
+:root { --bg: #ffffff; --text: #000000; --accent: #007bff; }
+
+body.dark-mode { --bg: #121212; --text: #f0f0f0; --accent: #90caf9; }
+
+header { background: var(--accent); color: #fff; padding: 1rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+
+button { background: var(--accent); border: none; padding: 10px 15px; color: white; border-radius: 6px; cursor: pointer; transition: transform 0.2s ease; }
+
+button:hover { transform: scale(1.05); }
+
+input[type="text"], input[type="email"], input[type="password"] { padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 6px; width: 100%; max-width: 400px; }
+
+.auth-box { margin: 10vh auto; max-width: 400px; background: var(--bg); padding: 2rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; }
+
+.add-task { padding: 1rem; display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+
+#task-list { max-width: 700px; margin: auto; padding: 1rem; }
+
+.task-item { display: flex; justify-content: space-between; padding: 0.8rem; margin: 0.5rem 0; background: rgba(0, 123, 255, 0.1); border-radius: 6px; animation: fadeIn 0.4s ease; }
+
+.hidden { display: none; }
+
+@keyframes fadeIn { from {opacity: 0; transform: translateY(10px);} to {opacity: 1; transform: translateY(0);} }
