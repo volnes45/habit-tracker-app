@@ -123,6 +123,9 @@ function calculateScores(logMap) {
   };
 }
 
+// Access db directly if it's declared globally
+db.collection("users").doc(currentUser.uid).collection("habits").add({ title: "Read Book", logs: {} });
+
 // Logout
 document.getElementById("logout-btn")?.addEventListener("click", () => {
   auth.signOut().then(() => {
