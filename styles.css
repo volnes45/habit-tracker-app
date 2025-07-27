@@ -1,0 +1,38 @@
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; transition: background-color 0.3s, color 0.3s; }
+
+.dark-mode { background-color: #121212; color: #f4f4f4; }
+
+.container { max-width: 500px; margin: 0 auto; padding: 20px; transition: opacity 0.3s ease-in-out; }
+
+h1, h2, h3 { text-align: center; }
+
+button, input[type="text"], input[type="email"], input[type="password"] { display: block; width: 100%; margin: 10px 0; padding: 12px; font-size: 1rem; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; transition: all 0.2s ease-in-out; }
+
+button { background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+
+button:hover { background-color: #45a049; }
+
+input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus { border-color: #4CAF50; outline: none; }
+
+.task { background-color: #ffffff; padding: 10px; margin: 5px 0; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; transition: background-color 0.3s ease-in-out; }
+
+.dark-mode .task { background-color: #1e1e1e; }
+
+.checkbox { width: 18px; height: 18px; margin-right: 10px; }
+
+#task-list { margin-top: 20px; }
+
+#login-section, #signup-section { transition: opacity 0.3s ease-in-out; opacity: 1; }
+
+.hidden { display: none; opacity: 0; }
+
+#main-content { display: none; }
+
+#main-content.active { display: block; animation: fadeIn 0.5s ease-in-out forwards; }
+
+@keyframes fadeIn { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
+
+.toggle-darkmode { position: absolute; top: 10px; right: 10px; background-color: #444; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; }
+
+.toggle-darkmode:hover { background-color: #333; }
+

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Daily Habit Tracker</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Habit Tracker</h1>
+
+    <div id="auth-section">
+      <input id="email" type="email" placeholder="Email" />
+      <input id="password" type="password" placeholder="Password" />
+      <button onclick="signup()">Signup</button>
+      <button onclick="login()">Login</button>
+      <button onclick="logout()">Logout</button>
+      <button onclick="resetPassword()">Reset Password</button>
+    </div>
+
+    <div id="app-section" class="hidden">
+      <button id="toggle-dark">🌗 Toggle Dark Mode</button>
+      <input type="text" id="habit-input" placeholder="Add a new habit" />
+      <button onclick="addHabit()">Add</button>
+
+      <div id="habits"></div>
+
+      <div class="buttons">
+        <button onclick="exportPDF()">📄 Export as PDF</button>
+        <button onclick="togglePrivacy()">🔐 Privacy Mode</button>
+      </div>
+
+      <div id="score">
+        <p>Weekly Score: <span id="weekly-score">0</span></p>
+        <p>Monthly Score: <span id="monthly-score">0</span></p>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="main.js"></script>
+</body>
+</html>
