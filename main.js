@@ -1,98 +1,131 @@
-// Firestore and Auth
-firebase.auth().onAuthStateChanged((user) => {
-  if (user) {
-    document.getElementById("loginSection").style.display = "none";
-    document.getElementById("mainSection").style.display = "block";
-    loadHabits(user.uid);
-  } else {
-    document.getElementById("loginSection").style.display = "block";
-    document.getElementById("mainSection").style.display = "none";
-  }
-});
-
+// Firebase setup
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
 const db = firebase.firestore();
 
-// Login
-document.getElementById("loginForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const email = e.target.email.value;
-  const password = e.target.password.value;
-  try {
-    await firebase.auth().signInWithEmailAndPassword(email, password);
-  } catch (err) {
-    alert("Login error: " + err.message);
+let currentUser = null;
+
+// DOM Elements
+const habitInput = document.getElementById("habit-input");
+const addHabitBtn = document.getElementById("add-habit");
+const habitList = document.getElementById("habit-list");
+const weeklyScoreEl = document.getElementById("weekly-score");
+const monthlyScoreEl = document.getElementById("monthly-score");
+
+// Check user status
+auth.onAuthStateChanged(user => {
+  if (user) {
+    currentUser = user;
+    loadHabits();
+  } else {
+    window.location.href = "login.html"; // Redirect to login
   }
 });
 
-// Signup
-document.getElementById("signupForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const email = e.target.email.value;
-  const password = e.target.password.value;
-  try {
-    await firebase.auth().createUserWithEmailAndPassword(email, password);
-  } catch (err) {
-    alert("Signup error: " + err.message);
-  }
-});
-
-// Logout
-document.getElementById("logoutBtn").addEventListener("click", () => {
-  firebase.auth().signOut();
-});
-
-// Add Habit
-document.getElementById("addHabitBtn").addEventListener("click", async () => {
-  const habitInput = document.getElementById("habitInput");
+// Add habit
+addHabitBtn.addEventListener("click", async () => {
   const title = habitInput.value.trim();
-  const user = firebase.auth().currentUser;
+  if (!title) return;
 
-  if (!title || !user) return alert("Enter habit or login first.");
-
-  await db.collection("users").doc(user.uid).collection("habits").add({
+  const habitRef = db.collection("users").doc(currentUser.uid).collection("habits").doc();
+  await habitRef.set({
     title,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-    completed: {} // { '2025-07-25': true }
+    logs: {}
   });
 
   habitInput.value = "";
-  loadHabits(user.uid);
+  loadHabits();
 });
 
-// Load Habits
-async function loadHabits(uid) {
-  const list = document.getElementById("habitList");
-  list.innerHTML = "";
+// Load all habits
+async function loadHabits() {
+  habitList.innerHTML = "";
+  const snapshot = await db.collection("users").doc(currentUser.uid).collection("habits").get();
+  let allLogs = [];
 
-  const today = new Date().toISOString().split("T")[0];
-  const habitsSnap = await db.collection("users").doc(uid).collection("habits").get();
-
-  habitsSnap.forEach((doc) => {
+  snapshot.forEach(doc => {
     const data = doc.data();
-    const li = document.createElement("li");
-    li.className = "habit-item";
-
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.checked = data.completed?.[today] || false;
-    checkbox.addEventListener("change", () => toggleHabit(uid, doc.id, today, checkbox.checked));
-
-    const label = document.createElement("label");
-    label.textContent = data.title;
-
-    li.appendChild(checkbox);
-    li.appendChild(label);
-    list.appendChild(li);
+    const habitId = doc.id;
+    renderHabit(habitId, data);
+    if (data.logs) allLogs.push(...Object.entries(data.logs));
   });
 
-  // Optional: loadScores(uid); // if weekly/monthly stats needed
+  const groupedLogs = groupLogs(allLogs);
+  const scores = calculateScores(groupedLogs);
+  weeklyScoreEl.textContent = `${scores.weeklyScore}%`;
+  monthlyScoreEl.textContent = `${scores.monthlyScore}%`;
 }
 
-// Toggle today's habit
-async function toggleHabit(uid, habitId, date, isChecked) {
-  const habitRef = db.collection("users").doc(uid).collection("habits").doc(habitId);
-  const update = {};
-  update[`completed.${date}`] = isChecked;
+// Render a habit
+function renderHabit(habitId, data) {
+  const habitEl = document.createElement("div");
+  habitEl.classList.add("habit");
 
-  await habitRef.update(update);
+  const titleEl = document.createElement("span");
+  titleEl.textContent = data.title;
+
+  const checkbox = document.createElement("input");
+  checkbox.type = "checkbox";
+
+  const today = new Date().toISOString().split("T")[0];
+  checkbox.checked = data.logs && data.logs[today];
+
+  checkbox.addEventListener("change", async () => {
+    await db.collection("users").doc(currentUser.uid)
+      .collection("habits").doc(habitId)
+      .update({
+        [`logs.${today}`]: checkbox.checked
+      });
+    loadHabits(); // Refresh scores
+  });
+
+  habitEl.appendChild(titleEl);
+  habitEl.appendChild(checkbox);
+  habitList.appendChild(habitEl);
 }
+
+// Group logs by date (flattening)
+function groupLogs(entries) {
+  const logMap = {};
+  for (const [date, value] of entries) {
+    if (!logMap[date]) logMap[date] = 0;
+    if (value === true) logMap[date]++;
+  }
+  return logMap;
+}
+
+// Weekly/Monthly Score Calculation
+function calculateScores(logMap) {
+  const now = new Date();
+  let weeklyTotal = 0;
+  let weeklyDone = 0;
+  let monthlyTotal = 0;
+  let monthlyDone = 0;
+
+  for (const [dateStr, count] of Object.entries(logMap)) {
+    const date = new Date(dateStr);
+    const daysAgo = (now - date) / (1000 * 60 * 60 * 24);
+
+    if (daysAgo <= 7) {
+      weeklyTotal++;
+      if (count > 0) weeklyDone++;
+    }
+
+    if (daysAgo <= 30) {
+      monthlyTotal++;
+      if (count > 0) monthlyDone++;
+    }
+  }
+
+  return {
+    weeklyScore: weeklyTotal ? Math.round((weeklyDone / weeklyTotal) * 100) : 0,
+    monthlyScore: monthlyTotal ? Math.round((monthlyDone / monthlyTotal) * 100) : 0
+  };
+}
+
+// Logout
+document.getElementById("logout-btn")?.addEventListener("click", () => {
+  auth.signOut().then(() => {
+    window.location.href = "login.html";
+  });
+});
