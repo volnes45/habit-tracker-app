@@ -1,26 +1,39 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Habit Tracker</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 </head>
 <body class="light-mode">
+
   <header>
     <h1>Habit Tracker</h1>
     <button id="logout-btn">Logout</button>
     <button id="toggle-dark">Toggle Dark Mode</button>
-  </header>  <main>
+  </header>
+
+  <main id="mainSection" style="display:none;">
     <section class="add-task">
       <input type="text" id="habit-input" placeholder="Enter your habit..." />
-<button id="add-habit">Add</button>
-<div id="habit-list"></div>
-<span id="weekly-score">0%</span>
-<span id="monthly-score">0%</span>
-    </section><section id="task-list"></section>
+      <button id="add-habit">Add</button>
+    </section>
 
-  </main>  <script src="firebase-config.js"></script>  <script src="main.js"></script></body>
-</html>/*
+    <section id="habit-list" class="habit-list"></section>
+
+    <div class="score-board">
+      <p>Weekly Score: <span id="weekly-score">0%</span></p>
+      <p>Monthly Score: <span id="monthly-score">0%</span></p>
+    </div>
+  </main>
+
+  <script src="firebase-config.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
